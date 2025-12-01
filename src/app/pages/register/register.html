@@ -1,0 +1,125 @@
+<div class="register-page">
+  <div class="register-header">
+    <h1>Event Campus</h1>
+    <p>Sistem Manajemen Kegiatan Mahasiswa</p>
+  </div>
+
+  <div class="register-card">
+    <div class="tabs">
+      <button class="tab tab-active" type="button">
+        Daftar Akun
+      </button>
+
+      <button class="tab tab-inactive" type="button" routerLink="/login">
+        Masuk
+      </button>
+    </div>
+
+    <div class="card-body">
+      <!-- ERROR MESSAGE -->
+      <p class="error-text" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </p>
+
+      <form #registerForm="ngForm" (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">
+            Email<span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">&#9993;</span>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Email"
+              required
+              [(ngModel)]="form.email"
+            />
+          </div>
+        </div>
+
+        <!-- Kata sandi -->
+        <div class="form-group">
+          <label for="password">
+            Kata Sandi<span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">&#128274;</span>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Kata Sandi"
+              required
+              minlength="8"
+              [(ngModel)]="form.password"
+            />
+          </div>
+        </div>
+
+        <!-- Nama lengkap -->
+        <div class="form-group">
+          <label for="full_name">
+            Nama Lengkap<span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">&#128100;</span>
+            <input
+              id="full_name"
+              name="full_name"
+              type="text"
+              placeholder="Nama Lengkap"
+              required
+              [(ngModel)]="form.full_name"
+            />
+          </div>
+        </div>
+
+        <!-- Nomor telepon -->
+        <div class="form-group">
+          <label for="phone_number">
+            Nomor Telepon<span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">&#128222;</span>
+            <input
+              id="phone_number"
+              name="phone_number"
+              type="tel"
+              placeholder="Nomor Telepon"
+              required
+              [(ngModel)]="form.phone_number"
+            />
+          </div>
+        </div>
+
+        <!-- Checkbox persetujuan -->
+        <div class="checkbox-row">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              name="agree"
+              [(ngModel)]="form.agree"
+              required
+            />
+            <span>
+              Saya menyetujui untuk menerima notifikasi reminder dan informasi
+              terkait event melalui email
+            </span>
+          </label>
+        </div>
+
+        <!-- Tombol register -->
+        <button
+          class="btn-primary"
+          type="submit"
+          [disabled]="registerForm.invalid || isLoading"
+        >
+          {{ isLoading ? 'Memproses...' : 'Daftar Akun' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

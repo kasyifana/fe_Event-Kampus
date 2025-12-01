@@ -1,0 +1,66 @@
+<p>notifikasi works!</p>
+<div class="notif-page">
+  <!-- Judul halaman -->
+  <h1 class="page-title">Notifikasi</h1>
+
+  <!-- Bar kecil di bawah judul -->
+  <div class="notif-header-row">
+    <span class="notif-info">
+      {{ unreadCount }} notifikasi belum dibaca
+    </span>
+
+    <button
+      type="button"
+      class="mark-all-btn"
+      (click)="markAllRead()"
+      [disabled]="unreadCount === 0"
+    >
+      Tandai semua dibaca
+    </button>
+  </div>
+
+  <!-- List notifikasi -->
+  <div class="notif-list">
+    <div
+      class="notif-item"
+      *ngFor="let n of notifications"
+      [class.notif-unread]="n.unread"
+    >
+      <!-- ikon bulat di kiri -->
+      <div
+        class="notif-icon"
+        [class.icon-reminder]="n.type === 'reminder'"
+        [class.icon-certificate]="n.type === 'certificate'"
+        [class.icon-success]="n.type === 'success'"
+        [class.icon-update]="n.type === 'update'"
+      >
+        <span>
+          <!-- pakai emoji dulu sebagai icon sederhana -->
+          {{
+            n.type === 'reminder'
+              ? '⏰'
+              : n.type === 'certificate'
+              ? '📄'
+              : n.type === 'success'
+              ? '✅'
+              : '📍'
+          }}
+        </span>
+      </div>
+
+      <!-- isi notifikasi -->
+      <div class="notif-content">
+        <div class="notif-title">{{ n.title }}</div>
+        <div class="notif-message">
+          {{ n.message }}
+        </div>
+        <div class="notif-time">{{ n.timeAgo }}</div>
+      </div>
+
+      <!-- titik biru kalau unread -->
+      <div class="notif-status" *ngIf="n.unread">
+        <span class="unread-dot"></span>
+      </div>
+    </div>
+  </div>
+</div>

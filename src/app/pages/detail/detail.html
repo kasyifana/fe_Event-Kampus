@@ -1,0 +1,109 @@
+<!-- src/app/pages/detail/detail.html -->
+<div class="detail-page">
+  <div class="detail-inner">
+    <!-- TOP ROW (Back) -->
+    <div class="detail-header">
+      <button type="button" class="back-link" (click)="goBack()">
+        <span class="back-icon">‹</span>
+        <span>Kembali</span>
+      </button>
+    </div>
+
+    <!-- LOADING / ERROR -->
+    <p *ngIf="isLoading" class="info-text">Memuat detail event...</p>
+    <p *ngIf="!isLoading && errorMessage" class="info-text error">
+      {{ errorMessage }}
+    </p>
+
+    <!-- PESAN SETELAH DAFTAR -->
+    <p *ngIf="!errorMessage && registerMessage" class="info-text">
+      {{ registerMessage }}
+    </p>
+
+    <!-- CARD DETAIL -->
+    <section
+      class="detail-card"
+      *ngIf="!isLoading && !errorMessage && event"
+    >
+      <!-- POSTER -->
+      <div class="poster-col">
+        <img
+          [src]="posterUrl"
+          [alt]="event.title"
+          class="poster-image"
+          loading="lazy"
+          (error)="onPosterError()"
+        />
+      </div>
+
+      <!-- INFO -->
+      <div class="info-col">
+        <div class="category-chip">
+          {{ categoryLabel }}
+        </div>
+
+        <h1 class="event-title">
+          {{ event.title }}
+        </h1>
+        <p class="event-organizer">
+          {{ event.organizer_name || 'Penyelenggara' }}
+        </p>
+
+        <!-- META -->
+        <div class="meta-list">
+          <div class="meta-item">
+            <span class="meta-icon">📅</span>
+            <div class="meta-text">
+              <div class="meta-label">Tanggal</div>
+              <div class="meta-value">{{ formattedDate }}</div>
+            </div>
+          </div>
+
+          <div class="meta-item">
+            <span class="meta-icon">⏰</span>
+            <div class="meta-text">
+              <div class="meta-label">Waktu</div>
+              <div class="meta-value">{{ formattedTime }}</div>
+            </div>
+          </div>
+
+          <div class="meta-item">
+            <span class="meta-icon">📍</span>
+            <div class="meta-text">
+              <div class="meta-label">Tempat</div>
+              <div class="meta-value">{{ locationText }}</div>
+            </div>
+          </div>
+
+          <div class="meta-item">
+            <span class="meta-icon">👥</span>
+            <div class="meta-text">
+              <div class="meta-label">Kuota</div>
+              <div class="meta-value">{{ quotaText }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DESKRIPSI -->
+        <div class="desc-block">
+          <h2>Deskripsi Event</h2>
+          <p>
+            {{ event.description }}
+          </p>
+        </div>
+
+        <!-- BUTTON -->
+        <div class="action-row">
+          <button
+            type="button"
+            class="btn-primary"
+            (click)="onRegister()"
+            [disabled]="isRegistering"
+          >
+            {{ isRegistering ? 'Mendaftar...' : 'Daftar Event' }}
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

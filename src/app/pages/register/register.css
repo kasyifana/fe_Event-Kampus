@@ -1,0 +1,167 @@
+.register-page {
+  min-height: 100vh;
+  padding: 40px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  box-sizing: border-box;
+}
+
+/* header judul */
+.register-header {
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.register-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.register-header p {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+/* kartu */
+.register-card {
+  width: 100%;
+  max-width: 620px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+}
+
+/* tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.tab-active {
+  background: #ffffff;
+  color: #2563eb;
+  border-bottom: 2px solid #2563eb;
+}
+
+.tab-inactive {
+  background: #f9fafb;
+  color: #9ca3af;
+}
+
+/* isi kartu */
+.card-body {
+  padding: 24px 36px 28px;
+}
+
+/* form */
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+/* input + icon */
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 0 12px;
+}
+
+.input-icon {
+  font-size: 16px;
+  margin-right: 8px;
+  color: #9ca3af;
+}
+
+.input-wrapper input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 4px;
+  font-size: 14px;
+  outline: none;
+}
+
+/* checkbox */
+.checkbox-row {
+  margin: 10px 0 18px;
+  background: #eef2ff;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.checkbox-label input[type='checkbox'] {
+  margin-top: 2px;
+}
+
+/* tombol */
+.btn-primary {
+  width: 100%;
+  border: none;
+  margin-top: 4px;
+  padding: 10px 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-primary:hover:enabled {
+  background: #1d4ed8;
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* responsif */
+@media (max-width: 480px) {
+  .card-body {
+    padding: 20px 18px 24px;
+  }
+
+  .register-header h1 {
+    font-size: 22px;
+  }
+}

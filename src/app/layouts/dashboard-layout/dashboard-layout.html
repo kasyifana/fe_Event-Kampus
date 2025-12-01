@@ -1,0 +1,73 @@
+<div class="user-shell" [class.sidebar-collapsed]="!sidebarOpen">
+  <!-- SIDEBAR -->
+  <aside class="user-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-circle">EC</div>
+      <div class="brand-text">
+        <div class="brand-title">Event Campus</div>
+        <div class="brand-subtitle">Mahasiswa</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item"
+      >
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Beranda</span>
+      </a>
+
+      <a
+        routerLink="/event-saya"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Event Saya</span>
+      </a>
+
+      <a
+        routerLink="/notifikasi"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label">Notifikasi</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN AREA (navbar + konten halaman) -->
+  <div class="user-main">
+    <!-- TOP NAVBAR -->
+    <header class="user-topbar">
+      <button class="menu-btn" type="button" (click)="toggleSidebar()">
+        ☰
+      </button>
+
+      <div class="topbar-center">
+        <div class="topbar-title">Event Campus</div>
+        <div class="topbar-subtitle">Kegiatan Mahasiswa UII</div>
+      </div>
+
+      <div class="topbar-right">
+        <button class="icon-btn" type="button">🔔</button>
+        <div class="user-chip">
+          <div class="user-avatar">U</div>
+          <div class="user-info">
+            <div class="user-name">Mahasiswa</div>
+            <div class="user-role">User</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- KONTEN HALAMAN -->
+    <main class="user-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

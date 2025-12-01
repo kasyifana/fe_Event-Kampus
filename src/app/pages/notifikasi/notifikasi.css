@@ -1,0 +1,146 @@
+/* container utama halaman */
+.notif-page {
+  width: 100%;
+  padding: 24px 32px 32px;
+  box-sizing: border-box;
+  background-color: #f5f5f7;
+}
+
+/* judul "Notifikasi" */
+.page-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* bar info + tombol "Tandai semua dibaca" */
+.notif-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.notif-info {
+  font-size: 13px;
+  color: #666;
+}
+
+.mark-all-btn {
+  border: none;
+  background: transparent;
+  color: #296cff;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.mark-all-btn:disabled {
+  color: #b5b5b5;
+  cursor: default;
+}
+
+/* list notifikasi */
+.notif-list {
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+/* item notifikasi */
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 18px;
+  border-bottom: 1px solid #e5e5ea;
+  background-color: #ffffff;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+/* untuk unread: sedikit abu-abuan */
+.notif-unread {
+  background-color: #f3f3f5;
+}
+
+/* icon bulat kiri */
+.notif-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.icon-reminder {
+  background-color: #f97373; /* merah lembut */
+}
+
+.icon-certificate {
+  background-color: #fbbf77; /* oren */
+}
+
+.icon-success {
+  background-color: #4ade80; /* hijau */
+}
+
+.icon-update {
+  background-color: #a78bfa; /* ungu */
+}
+
+/* isi teks */
+.notif-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 2px;
+}
+
+.notif-message {
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.notif-time {
+  font-size: 11px;
+  color: #999;
+}
+
+/* titik biru unread di kanan */
+.notif-status {
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+}
+
+.unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background-color: #296cff;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .notif-page {
+    padding: 16px;
+  }
+
+  .notif-item {
+    padding-inline: 12px;
+  }
+}

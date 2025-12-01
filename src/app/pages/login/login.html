@@ -1,0 +1,78 @@
+<div class="login-page">
+  <div class="login-header">
+    <h1>Event Campus</h1>
+    <p>Sistem Manajemen Kegiatan Mahasiswa</p>
+  </div>
+
+  <div class="login-card">
+    <div class="tabs">
+      <button class="tab tab-inactive" type="button" routerLink="/register">
+        Daftar Akun
+      </button>
+      <button class="tab tab-active" type="button" routerLink="/login">
+        Masuk
+      </button>
+    </div>
+
+    <div class="card-body">
+      <h2 class="card-title">Selamat Datang Kembali!</h2>
+      <p class="card-subtitle">Masuk untuk mengakses event kampus</p>
+
+      <!-- ERROR MESSAGE -->
+      <p class="error-text" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </p>
+
+      <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">
+            Email<span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">&#9993;</span>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Email"
+              required
+              [(ngModel)]="form.email"
+            />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">
+            Kata Sandi<span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-icon">&#128274;</span>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Kata Sandi"
+              required
+              [(ngModel)]="form.password"
+            />
+          </div>
+        </div>
+
+        <button
+          class="btn-primary"
+          type="submit"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          {{ isLoading ? 'Memproses...' : 'Masuk' }}
+        </button>
+      </form>
+
+      <p class="register-text">
+        Belum punya akun?
+        <a routerLink="/register">Daftar sekarang</a>
+      </p>
+    </div>
+  </div>
+</div>

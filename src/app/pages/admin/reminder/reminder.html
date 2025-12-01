@@ -1,0 +1,117 @@
+<!-- src/app/pages/admin/reminder/reminder.html -->
+
+<div class="reminder-page">
+  <!-- HEADER -->
+  <div class="page-header">
+    <div>
+      <h1>Reminder</h1>
+      <p>Kirim notifikasi ke peserta</p>
+    </div>
+  </div>
+
+  <div class="reminder-layout">
+    <!-- ============ KARTU KIRI: REMINDER OTOMATIS ============ -->
+    <section class="card card-auto">
+      <h2 class="card-title">Reminder Otomatis</h2>
+
+      <div class="auto-list">
+        <div
+          class="auto-item"
+          *ngFor="let r of autoReminders"
+        >
+          <div class="auto-text">
+            <div class="auto-label">{{ r.label }}</div>
+            <div class="auto-desc">{{ r.description }}</div>
+          </div>
+
+          <!-- toggle -->
+          <button
+            type="button"
+            class="toggle"
+            [class.toggle-on]="r.active"
+            (click)="toggleAuto(r)"
+          >
+            <span class="toggle-knob"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ KARTU KANAN: KIRIM MANUAL ============ -->
+    <section class="card card-manual">
+      <h2 class="card-title">Kirim Manual</h2>
+
+      <form
+        (ngSubmit)="sendManualReminder(manualForm)"
+        #manualForm="ngForm"
+        class="manual-form"
+      >
+        <!-- Pilih Event -->
+        <div class="form-group">
+          <label for="event">Pilih Event</label>
+          <div class="select-wrapper">
+            <select
+              id="event"
+              name="eventId"
+              required
+              [(ngModel)]="manualData.eventId"
+            >
+              <option value="" disabled hidden>
+                {{ isLoadingEvents ? 'Memuat event...' : 'Pilih Event' }}
+              </option>
+              <option
+                *ngFor="let e of events"
+                [value]="e.id"
+              >
+                {{ e.name }}
+              </option>
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <!-- Template Pesan -->
+        <div class="form-group">
+          <label for="template">Template Pesan</label>
+          <div class="select-wrapper">
+            <select
+              id="template"
+              name="templateId"
+              required
+              [(ngModel)]="manualData.templateId"
+            >
+              <option value="" disabled hidden>Template Pesan</option>
+              <option
+                *ngFor="let t of templates"
+                [value]="t.id"
+              >
+                {{ t.name }}
+              </option>
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <!-- Pesan Tambahan -->
+        <div class="form-group">
+          <label for="extra">Pesan Tambahan</label>
+          <textarea
+            id="extra"
+            name="extraMessage"
+            rows="4"
+            placeholder="Tulis pesan tambahan (opsional)"
+            [(ngModel)]="manualData.extraMessage"
+          ></textarea>
+        </div>
+
+        <button
+          class="btn-primary"
+          type="submit"
+          [disabled]="manualForm.invalid || isSending"
+        >
+          ✈ {{ isSending ? 'Mengirim...' : 'Kirim Reminder' }}
+        </button>
+      </form>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,464 @@
+<!-- src/app/pages/admin/kelola-event/kelola-event.html -->
+<div class="admin-page">
+  <!-- HEADER ATAS -->
+  <div class="page-header">
+    <div>
+      <h1>Kelola Event</h1>
+      <p>Buat dan kelola event</p>
+    </div>
+
+    <button
+      class="btn-primary"
+      type="button"
+      (click)="openCreateModal()"
+      [disabled]="isLoading"
+    >
+      + Buat Event Baru
+    </button>
+  </div>
+
+  <!-- ALERT GLOBAL (UNTUK LOAD / PUBLISH / DELETE) -->
+  <div class="alert alert-loading" *ngIf="isLoading">
+    Memproses... mohon tunggu sebentar.
+  </div>
+  <div class="alert alert-error" *ngIf="!isLoading && errorMessage">
+    {{ errorMessage }}
+  </div>
+  <div class="alert alert-success" *ngIf="!isLoading && successMessage">
+    {{ successMessage }}
+  </div>
+
+  <!-- KARTU STATISTIK -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Total Event</div>
+      <div class="stat-value">{{ totalEvents }}</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Event Aktif</div>
+      <div class="stat-value">{{ activeEventsCount }}</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Total Peserta</div>
+      <div class="stat-value">{{ totalParticipants }}</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Persentase Kehadiran</div>
+      <div class="stat-value stat-link">{{ attendancePercent }}%</div>
+    </div>
+  </div>
+
+  <!-- SEARCH & FILTER -->
+  <div class="search-row">
+    <div class="search-box">
+      <span class="search-icon"></span>
+      <input
+        type="text"
+        placeholder="Cari Event"
+        [(ngModel)]="searchKeyword"
+        (keyup.enter)="onSearchEnter()"
+      />
+    </div>
+
+    <button class="btn-filter" type="button">
+    <span>Filter</span>
+    </button>
+  </div>
+
+  <!-- LIST EVENT -->
+  <div class="event-list" *ngIf="filteredEvents.length > 0">
+    <table class="event-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Kategori</th>
+          <th>Tanggal</th>
+          <th>Pendaftar</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ev of filteredEvents">
+          <!-- Nama + Penyelenggara -->
+          <td class="col-event">
+            <div class="event-title">{{ ev.title }}</div>
+            <div class="event-organizer">
+              {{ ev.organizer_name || 'Penyelenggara' }}
+            </div>
+          </td>
+
+          <!-- Kategori -->
+          <td class="col-category">
+            <span class="category-chip">
+              {{ getCategoryLabel(ev.category) }}
+            </span>
+          </td>
+
+          <!-- Tanggal & Waktu -->
+          <td class="col-date">
+            <div class="date-line">
+              {{ ev.start_date | date: 'dd MMMM yyyy' }}
+            </div>
+            <div class="time-line">
+              {{ ev.start_date | date: 'HH:mm' }} -
+              {{ ev.end_date | date: 'HH:mm' }} WIB
+            </div>
+          </td>
+
+          <!-- Kuota / Pendaftar -->
+          <td class="col-quota">
+            <div class="quota-count">
+              {{ ev.current_participants || 0 }}/{{ ev.max_participants || 0 }}
+            </div>
+            <div class="quota-bar">
+              <div
+                class="quota-bar-fill"
+                [style.width.%]="getQuotaPercent(ev)"
+              ></div>
+            </div>
+          </td>
+
+          <!-- Status -->
+          <td class="col-status">
+            <span [ngClass]="getStatusClass(ev.status)">
+              {{ getStatusLabel(ev.status) }}
+            </span>
+
+            <!-- Tombol publish hanya saat status draft -->
+            <button
+              *ngIf="ev.status === 'draft'"
+              class="status-link"
+              type="button"
+              (click)="publishEvent(ev.id)"
+              [disabled]="isLoading"
+            >
+              Publish
+            </button>
+          </td>
+
+          <!-- Aksi -->
+          <td class="col-actions">
+            <!-- Tombol lihat peserta event ini (ke halaman peserta) -->
+            <button
+              class="icon-btn"
+              type="button"
+              title="Lihat Peserta"
+              [routerLink]="['/admin', 'peserta']"
+            >
+              👥
+            </button>
+
+            <button
+              class="icon-btn"
+              type="button"
+              title="Lihat"
+              (click)="viewEvent(ev)"
+            >
+              👁
+            </button>
+
+            <button
+              class="icon-btn"
+              type="button"
+              title="Edit"
+              (click)="editEvent(ev)"
+            >
+              ✏️
+            </button>
+
+            <button
+              class="icon-btn icon-danger"
+              type="button"
+              title="Hapus"
+              (click)="deleteEvent(ev.id)"
+              [disabled]="isLoading"
+            >
+              🗑
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <p *ngIf="!filteredEvents.length && !isLoading">
+    Belum ada event yang kamu buat.
+  </p>
+
+  <!-- =============== MODAL BUAT / EDIT EVENT =============== -->
+  <div class="modal-backdrop" *ngIf="showCreateModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>{{ isEditMode ? 'Edit Event' : 'Buat Event Baru' }}</h2>
+        <button
+          type="button"
+          class="icon-button"
+          aria-label="Tutup"
+          (click)="closeCreateModal()"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- alert error & success khusus form -->
+      <div class="alert alert-error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      <div class="alert alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <form
+        #createEventForm="ngForm"
+        (ngSubmit)="submitNewEvent(createEventForm)"
+        class="modal-body"
+      >
+        <!-- Nama Event -->
+        <div class="form-row">
+          <label for="title">Nama Event</label>
+          <input
+            id="title"
+            type="text"
+            name="title"
+            required
+            placeholder="Nama Event"
+            [(ngModel)]="form.title"
+          />
+        </div>
+
+        <!-- Kategori & Tipe Event -->
+        <div class="grid-2">
+          <div class="form-row">
+            <label for="category">Kategori</label>
+            <select
+              id="category"
+              name="category"
+              required
+              [(ngModel)]="form.category"
+            >
+              <option value="">Pilih Kategori</option>
+              <option value="seminar">Seminar</option>
+              <option value="workshop">Workshop</option>
+              <option value="lomba">Lomba</option>
+              <option value="konser">Konser</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="event_type">Tipe Event</label>
+            <select
+              id="event_type"
+              name="event_type"
+              required
+              [(ngModel)]="form.event_type"
+            >
+              <option value="">Pilih Tipe</option>
+              <option value="online">Online</option>
+              <option value="offline">Offline</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tanggal & Jam Mulai -->
+        <div class="grid-2">
+          <div class="form-row">
+            <label for="start_date">Tanggal Mulai</label>
+            <input
+              id="start_date"
+              type="date"
+              name="start_date"
+              required
+              [(ngModel)]="form.start_date"
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="start_time">Jam Mulai</label>
+            <input
+              id="start_time"
+              type="time"
+              name="start_time"
+              required
+              [(ngModel)]="form.start_time"
+            />
+          </div>
+        </div>
+
+        <!-- Tanggal & Jam Selesai -->
+        <div class="grid-2">
+          <div class="form-row">
+            <label for="end_date">Tanggal Selesai</label>
+            <input
+              id="end_date"
+              type="date"
+              name="end_date"
+              required
+              [(ngModel)]="form.end_date"
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="end_time">Jam Selesai</label>
+            <input
+              id="end_time"
+              type="time"
+              name="end_time"
+              required
+              [(ngModel)]="form.end_time"
+            />
+          </div>
+        </div>
+
+        <!-- Deadline Pendaftaran -->
+        <div class="grid-2">
+          <div class="form-row">
+            <label for="registration_date">Batas Pendaftaran (Tanggal)</label>
+            <input
+              id="registration_date"
+              type="date"
+              name="registration_date"
+              required
+              [(ngModel)]="form.registration_date"
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="registration_time">Batas Pendaftaran (Jam)</label>
+            <input
+              id="registration_time"
+              type="time"
+              name="registration_time"
+              required
+              [(ngModel)]="form.registration_time"
+            />
+          </div>
+        </div>
+
+        <!-- Lokasi & Kuota -->
+        <div class="grid-2">
+          <div class="form-row">
+            <label for="location">
+              Lokasi
+              <span *ngIf="form.event_type === 'offline'">
+                (wajib untuk offline)
+              </span>
+            </label>
+            <input
+              id="location"
+              type="text"
+              name="location"
+              [required]="form.event_type === 'offline'"
+              placeholder="Lokasi Acara"
+              [(ngModel)]="form.location"
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="max_participants">Kuota Peserta</label>
+            <input
+              id="max_participants"
+              type="number"
+              name="max_participants"
+              min="1"
+              required
+              placeholder="Kuota Peserta"
+              [(ngModel)]="form.max_participants"
+            />
+          </div>
+        </div>
+
+        <!-- Link Zoom -->
+        <div class="form-row">
+          <label for="zoom_link">
+            Link Zoom
+            <span *ngIf="form.event_type === 'online'">
+              (wajib untuk online)
+            </span>
+          </label>
+          <input
+            id="zoom_link"
+            type="text"
+            name="zoom_link"
+            [required]="form.event_type === 'online'"
+            placeholder="Masukkan link Zoom jika event online"
+            [(ngModel)]="form.zoom_link"
+          />
+        </div>
+
+        <!-- Khusus civitas UII -->
+        <div class="form-row checkbox-row">
+          <label>
+            <input
+              type="checkbox"
+              name="is_uii_only"
+              [(ngModel)]="form.is_uii_only"
+            />
+            Khusus civitas UII
+          </label>
+        </div>
+
+        <!-- Upload Poster -->
+        <div class="form-row">
+          <label>Upload Poster</label>
+
+          <div class="upload-box" (click)="fileInput.click()">
+            <p>Drag & drop poster atau klik untuk upload</p>
+            <span>Format: JPG, PNG (Max 5MB)</span>
+
+            <div class="file-name" *ngIf="posterFile">
+              {{ posterFile.name }}
+            </div>
+          </div>
+
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            hidden
+            (change)="onPosterSelected($event)"
+          />
+        </div>
+
+        <!-- Deskripsi Event -->
+        <div class="form-row">
+          <label for="description">Deskripsi Event</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="4"
+            required
+            placeholder="Jelaskan tentang event ini"
+            [(ngModel)]="form.description"
+          ></textarea>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="closeCreateModal()"
+            [disabled]="isLoading"
+          >
+            Batal
+          </button>
+
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="createEventForm.invalid || isLoading"
+          >
+            {{ isEditMode
+              ? (isLoading ? 'Menyimpan...' : 'Simpan Perubahan')
+              : (isLoading ? 'Menyimpan...' : 'Buat Event') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
