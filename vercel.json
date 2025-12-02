@@ -10,6 +10,14 @@
             "destination": "http://103.49.239.164:3000/api/$1"
         },
         {
+            "source": "/uploads/(.*)",
+            "destination": "http://103.49.239.164:3000/uploads/$1"
+        },
+        {
+            "source": "/files/(.*)",
+            "destination": "http://103.49.239.164:3000/files/$1"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
