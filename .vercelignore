@@ -1,7 +1,2 @@
-node_modules
 .angular
-.vscode
-dist
-src
-*.log
-*.tmp
+node_modules
