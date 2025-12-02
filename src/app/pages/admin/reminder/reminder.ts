@@ -1,8 +1,8 @@
-// src/app/pages/admin/reminder/reminder.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { EventService } from '../../../services/event.service';
+import { ReminderService } from '../../../services/reminder.service';
 
 interface AutoReminder {
   id: string;          // h-3 | h-1 | h0
@@ -68,7 +68,10 @@ export class Reminder implements OnInit {
   isLoadingEvents = false;
   isSending = false;
 
-  constructor(private eventService: EventService) {}
+  constructor(
+    private eventService: EventService,
+    private reminderService: ReminderService
+  ) { }
 
   ngOnInit(): void {
     this.loadEventsForDropdown();
@@ -107,12 +110,24 @@ export class Reminder implements OnInit {
   // REMINDER OTOMATIS (KIRI)
   // ==========================
   toggleAuto(rem: AutoReminder) {
+    // Simpan state lama untuk revert jika gagal
+    const oldState = rem.active;
     rem.active = !rem.active;
-    console.log('Auto reminder changed:', rem);
 
-    // NOTE:
-    // Di sini nanti bisa dipanggil API backend, contoh:
-    // this.reminderService.updateAutoReminder(rem.id, rem.active).subscribe(...)
+    console.log('Auto reminder changing:', rem);
+
+    this.reminderService.updateAutoReminder(rem.id, rem.active).subscribe({
+      next: (res) => {
+        console.log('[Reminder] Auto reminder updated:', res);
+        // Optional: Show toast success
+      },
+      error: (err) => {
+        console.error('[Reminder] Failed to update auto reminder:', err);
+        // Revert state
+        rem.active = oldState;
+        alert('Gagal mengubah status auto reminder. Silakan coba lagi.');
+      }
+    });
   }
 
   // ==========================
@@ -131,16 +146,22 @@ export class Reminder implements OnInit {
       extra_message: this.manualData.extraMessage || undefined,
     };
 
-    console.log('[Reminder] kirim manual (dummy):', payload);
+    console.log('[Reminder] Sending manual reminder:', payload);
 
-    // NOTE:
-    // Kalau backend sudah siap, di sini diganti:
-    // this.reminderService.sendManual(payload).subscribe({...})
-
-    setTimeout(() => {
-      alert('Reminder manual dikirim (dummy).');
-      this.isSending = false;
-      this.manualData.extraMessage = '';
-    }, 400);
+    this.reminderService.sendManualReminder(payload).subscribe({
+      next: (res) => {
+        console.log('[Reminder] Manual reminder sent:', res);
+        alert('Reminder berhasil dikirim ke semua peserta event!');
+        this.isSending = false;
+        this.manualData.extraMessage = '';
+        // Reset form if needed
+        // form.resetForm();
+      },
+      error: (err) => {
+        console.error('[Reminder] Failed to send manual reminder:', err);
+        alert('Gagal mengirim reminder. Pastikan backend berjalan dan endpoint benar.');
+        this.isSending = false;
+      }
+    });
   }
 }
