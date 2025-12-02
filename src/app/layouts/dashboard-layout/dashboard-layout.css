@@ -1,18 +1,25 @@
 :host {
   display: block;
   height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;
+  width: 100vw;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* SHELL UTAMA */
 .user-shell {
   display: flex;
-  height: 100%;
+  height: 100vh;
+  width: 100vw;
+  margin: 0 !important;
+  padding: 0 !important;
   background: #f3f3f3;
+  position: relative;
+  overflow: hidden;
 }
 
-/* SIDEBAR MAHASISWA – mirip admin */
+/* ========== SIDEBAR ========== */
 .user-sidebar {
   width: 250px;
   background: linear-gradient(180deg, #4f46e5, #7c3aed);
@@ -21,20 +28,11 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease, width 0.3s ease;
+  flex-shrink: 0;
 }
 
-.user-shell.sidebar-collapsed .user-sidebar {
-  width: 64px;
-}
-
-.user-shell.sidebar-collapsed .brand-text {
-  display: none;
-}
-
-.user-shell.sidebar-collapsed .nav-label {
-  display: none;
-}
-
+/* Sidebar Header */
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -53,24 +51,28 @@
   justify-content: center;
   font-weight: 600;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .brand-text {
   display: flex;
   flex-direction: column;
+  transition: opacity 0.2s ease;
 }
 
 .brand-title {
   font-weight: 600;
   font-size: 15px;
+  white-space: nowrap;
 }
 
 .brand-subtitle {
   font-size: 11px;
   opacity: 0.8;
+  white-space: nowrap;
 }
 
-/* NAV SIDEBAR */
+/* Navigation */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -103,26 +105,35 @@
 
 .nav-icon {
   font-size: 16px;
+  flex-shrink: 0;
 }
 
-/* MAIN AREA MAHASISWA */
+.nav-label {
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+/* ========== MAIN AREA ========== */
 .user-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* TOPBAR */
+/* Topbar */
 .user-topbar {
   height: 60px;
   background: #ffffff;
   border-bottom: 1px solid #e3e3e3;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 16px;
   box-sizing: border-box;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .menu-btn {
@@ -130,8 +141,10 @@
   background: transparent;
   font-size: 20px;
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 999px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
 }
 
 .menu-btn:hover {
@@ -141,6 +154,7 @@
 .topbar-center {
   flex: 1;
   text-align: center;
+  min-width: 0;
 }
 
 .topbar-title {
@@ -156,7 +170,8 @@
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .icon-btn {
@@ -166,13 +181,14 @@
   cursor: pointer;
   padding: 6px;
   border-radius: 999px;
+  transition: background 0.2s ease;
 }
 
 .icon-btn:hover {
   background: #f1f1f1;
 }
 
-/* USER CHIP */
+/* User Chip */
 .user-chip {
   display: flex;
   align-items: center;
@@ -193,6 +209,7 @@
   justify-content: center;
   font-size: 13px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .user-info {
@@ -203,18 +220,148 @@
 .user-name {
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .user-role {
   font-size: 11px;
   color: #777;
+  white-space: nowrap;
 }
 
-/* KONTEN */
+/* Content */
 .user-content {
   flex: 1;
-  padding: 20px 24px;
+  padding: 0;
+  margin: 0;
   overflow: auto;
   box-sizing: border-box;
   background: #f3f4f6;
+}
+
+/* ========== RESPONSIVE BREAKPOINTS ========== */
+
+/* Mobile (< 768px) - Sidebar sebagai overlay */
+@media (max-width: 767px) {
+  .user-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Overlay backdrop saat sidebar terbuka */
+  .user-shell:not(.sidebar-collapsed)::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Sidebar visible when open */
+  .user-shell:not(.sidebar-collapsed) .user-sidebar {
+    transform: translateX(0);
+  }
+
+  /* Adjust content padding on mobile */
+  .user-content {
+    padding: 12px;
+  }
+
+  /* Hide user info text on mobile */
+  .user-info {
+    display: none;
+  }
+
+  /* Adjust topbar padding */
+  .user-topbar {
+    padding: 0 12px;
+  }
+
+  /* Center topbar content better on mobile */
+  .topbar-center {
+    margin-left: -40px;
+    /* Compensate for burger button */
+  }
+}
+
+/* Tablet (768px - 1023px) - Sidebar dapat di-collapse */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .user-shell.sidebar-collapsed .user-sidebar {
+    width: 64px;
+  }
+
+  .user-shell.sidebar-collapsed .brand-text {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .user-shell.sidebar-collapsed .nav-label {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Adjust content padding on tablet */
+  .user-content {
+    padding: 18px;
+  }
+
+  /* Show abbreviated user info on tablet */
+  .user-shell.sidebar-collapsed .user-info {
+    display: none;
+  }
+}
+
+/* Desktop (>= 1024px) - Full layout */
+@media (min-width: 1024px) {
+  .user-shell.sidebar-collapsed .user-sidebar {
+    width: 70px;
+  }
+
+  .user-shell.sidebar-collapsed .brand-text {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .user-shell.sidebar-collapsed .nav-label {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .user-content {
+    padding: 24px;
+  }
+}
+
+/* Landscape phones */
+@media (max-width: 767px) and (orientation: landscape) {
+  .user-sidebar {
+    width: 220px;
+  }
+
+  .sidebar-header {
+    margin-bottom: 16px;
+  }
+
+  .nav-item {
+    padding: 8px 12px;
+  }
 }

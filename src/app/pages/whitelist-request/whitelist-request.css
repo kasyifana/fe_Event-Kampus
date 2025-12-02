@@ -1,0 +1,382 @@
+/* ===== WHITELIST REQUEST PAGE ===== */
+
+/* Container - edge-to-edge */
+.whitelist-page {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    background-color: #f5f5f7;
+    min-height: 100vh;
+}
+
+/* Hero Header - full width gradient */
+.page-header {
+    background: linear-gradient(90deg, #4c6fff 0%, #a94bff 50%, #e14eff 100%);
+    border-radius: 0;
+    padding: 24px 32px 20px;
+    margin: 0 0 24px 0;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.page-header h1 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.page-header p {
+    margin: 4px 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Page Content */
+.page-content {
+    padding: 0 32px 32px 32px;
+    max-width: 800px;
+}
+
+/* Alerts */
+.alert {
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.alert-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.alert-error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.alert-success {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* Status Card */
+.status-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    margin-bottom: 24px;
+}
+
+.status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.status-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-approved {
+    background-color: #e0fbea;
+    color: #15803d;
+}
+
+.status-rejected {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.info-row .label {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.info-row .value {
+    font-size: 14px;
+    color: #111827;
+    text-align: right;
+}
+
+.status-footer {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.info-text {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.info-text.success {
+    color: #15803d;
+}
+
+.info-text.error {
+    color: #b91c1c;
+}
+
+/* Form Card */
+.form-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 28px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    margin-bottom: 24px;
+}
+
+.form-card h3 {
+    margin: 0 0 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.required {
+    color: #ef4444;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    outline: none;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+}
+
+.form-group input[type="text"]:focus {
+    border-color: #4c6fff;
+    background-color: #ffffff;
+}
+
+.form-group input[type="text"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+/* Upload Area */
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 2px dashed #d1d5db;
+    background-color: #f9fafb;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-self: flex-start;
+}
+
+.upload-btn:hover:not(:disabled) {
+    border-color: #4c6fff;
+    background-color: #eef1ff;
+    color: #4c6fff;
+}
+
+.upload-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.upload-btn .icon {
+    font-size: 20px;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background-color: #f0fdf4;
+    border-radius: 10px;
+    border: 1px solid #bbf7d0;
+}
+
+.file-icon {
+    color: #22c55e;
+    font-weight: bold;
+}
+
+.file-name {
+    flex: 1;
+    font-size: 14px;
+    color: #111827;
+    font-weight: 500;
+}
+
+.file-size {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* Form Actions */
+.form-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-primary {
+    padding: 12px 32px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(90deg, #4c6fff, #7d4cff);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(76, 111, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(90deg, #3a5cef, #6b3cef);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(76, 111, 255, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Info Card */
+.info-card {
+    background: #f0f9ff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    border: 1px solid #bfdbfe;
+}
+
+.info-card h4 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e40af;
+}
+
+.info-card ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #1e40af;
+}
+
+.info-card li {
+    font-size: 13px;
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+.info-card li:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .page-header {
+        padding: 16px 18px;
+    }
+
+    .page-header h1 {
+        font-size: 20px;
+    }
+
+    .page-content {
+        padding: 0 16px 24px 16px;
+    }
+
+    .form-card,
+    .status-card {
+        padding: 16px 18px;
+    }
+
+    .info-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .info-row .value {
+        text-align: left;
+    }
+
+    .form-actions {
+        justify-content: stretch;
+    }
+
+    .btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+}

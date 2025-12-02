@@ -10,32 +10,25 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a
-        routerLink="/home"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="nav-item"
-      >
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item"
+        (click)="onNavClick()">
         <span class="nav-icon">🏠</span>
         <span class="nav-label">Beranda</span>
       </a>
 
-      <a
-        routerLink="/event-saya"
-        routerLinkActive="active"
-        class="nav-item"
-      >
+      <a routerLink="/event-saya" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
         <span class="nav-icon">📅</span>
         <span class="nav-label">Event Saya</span>
       </a>
 
-      <a
-        routerLink="/notifikasi"
-        routerLinkActive="active"
-        class="nav-item"
-      >
+      <a routerLink="/notifikasi" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
         <span class="nav-icon">🔔</span>
         <span class="nav-label">Notifikasi</span>
+      </a>
+
+      <a routerLink="/whitelist-request" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+        <span class="nav-icon">🏢</span>
+        <span class="nav-label">Jadi Organisasi</span>
       </a>
     </nav>
   </aside>

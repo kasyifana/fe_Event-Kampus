@@ -1,0 +1,20 @@
+:host {
+  display: block;
+  height: 100vh;
+  width: 100vw;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* SHELL UTAMA */
+.user-shell {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f3f3f3;
+  position: relative;
+  overflow: hidden;
+}

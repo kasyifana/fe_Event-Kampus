@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://domain-production-mu.com/api/v1',
+  apiBaseUrl: '/api/v1',
+  fileBaseUrl: 'http://103.49.239.164:3000',
 };

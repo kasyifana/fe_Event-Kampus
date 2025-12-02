@@ -1,31 +1,38 @@
-/* src/app/pages/admin/peserta-admin/peserta-admin.css */
+/* ===== HALAMAN PESERTA - MODERN UNIFIED STYLE ===== */
 
+/* Container utama - ZERO padding for edges */
 .peserta-page {
-  padding: 24px 32px 32px;
-  background-color: #f4f4f6;
-  min-height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
+  background-color: #f5f5f7;
+  min-height: 100vh;
 }
 
-/* Header */
+/* ===== HERO HEADER ===== */
 .page-header {
+  background: linear-gradient(90deg, #4c6fff 0%, #a94bff 50%, #e14eff 100%);
+  border-radius: 0;
+  padding: 24px 32px 20px;
+  margin: 0 0 24px 0;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .title-group h1 {
-  margin: 0;
-  font-size: 20px;
+  margin: 0 0 6px;
+  font-size: 22px;
   font-weight: 600;
-  color: #222;
 }
 
 .title-group p {
   margin: 4px 0 0;
-  font-size: 13px;
-  color: #777;
+  font-size: 14px;
+  opacity: 0.9;
 }
 
 /* Export button */
@@ -33,84 +40,86 @@
   border: none;
   outline: none;
   border-radius: 999px;
-  padding: 8px 18px;
-  font-size: 13px;
+  padding: 10px 20px;
+  font-size: 14px;
   font-weight: 500;
-  color: #fff;
-  background-color: #22c55e;
+  color: #22c55e;
+  background-color: #ffffff;
   cursor: pointer;
-  box-shadow: 0 8px 16px rgba(34, 197, 94, 0.25);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
 .btn-export:hover {
-  background-color: #16a34a;
+  background-color: #f0fdf4;
 }
 
-/* Search bar */
+/* ===== SEARCH BAR ===== */
 .toolbar {
   margin-bottom: 16px;
+  padding: 0 32px;
 }
 
 .search-box {
   display: flex;
   align-items: center;
   max-width: 420px;
-  padding: 6px 12px;
-  border-radius: 999px;
+  padding: 0 14px;
+  border-radius: 22px;
   background-color: #ffffff;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+  height: 36px;
 }
 
 .search-icon {
   font-size: 14px;
   margin-right: 6px;
+  color: #9ca3af;
 }
 
 .search-box input {
   border: none;
   outline: none;
-  width: 100%;
+  flex: 1;
   font-size: 13px;
   background: transparent;
 }
 
-/* Table */
+/* ===== TABLE ===== */
 .table-wrapper {
-  background-color: transparent;
-  border-radius: 14px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.04);
+  margin: 0 32px 24px 32px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  background-color: #ffffff;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
 thead {
-  background-color: #f8f9fb;
+  background-color: #f9fafb;
 }
 
 th,
 td {
-  padding: 10px 16px;
+  padding: 12px 18px;
   text-align: left;
 }
 
 th {
-  font-weight: 500;
+  font-weight: 600;
   color: #6b7280;
-  font-size: 12px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-tbody tr + tr {
-  border-top: 1px solid #e5e7eb;
+tbody tr+tr {
+  border-top: 1px solid #f3f4f6;
 }
 
 /* Column widths */
@@ -157,13 +166,13 @@ tbody tr + tr {
 }
 
 .status-confirmed {
-  background-color: rgba(34, 197, 94, 0.12);
-  color: #16a34a;
+  background-color: #e0fbea;
+  color: #15803d;
 }
 
 .status-pending {
-  background-color: rgba(234, 179, 8, 0.2);
-  color: #b45309;
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 /* Action icons */
@@ -173,6 +182,12 @@ tbody tr + tr {
   cursor: pointer;
   font-size: 16px;
   margin-right: 8px;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.icon-btn:hover {
+  background-color: #f3f4f6;
 }
 
 .icon-btn:last-child {
@@ -180,16 +195,94 @@ tbody tr + tr {
 }
 
 .icon-danger {
-  color: #ef4444;
+  color: #dc2626;
 }
 
-/* Responsif ringan */
-@media (max-width: 1024px) {
+/* ===== RESPONSIVE - COMPREHENSIVE ===== */
+
+/* Tablet */
+@media (max-width: 1023px) {
   .peserta-page {
-    padding: 16px 16px 24px;
+    padding: 20px 24px;
+  }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  .peserta-page {
+    padding: 12px;
+  }
+
+  /* Header - stack vertical */
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 18px;
+    gap: 12px;
+  }
+
+  .title-group h1 {
+    font-size: 20px;
+  }
+
+  .title-group p {
+    font-size: 13px;
+  }
+
+  .btn-export {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    margin-bottom: 12px;
   }
 
   .search-box {
     max-width: 100%;
+    height: 40px;
+  }
+
+  /* Table - horizontal scroll */
+  .table-wrapper {
+    border-radius: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 700px;
+    font-size: 12px;
+  }
+
+  th,
+  td {
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+
+  .icon-btn {
+    font-size: 14px;
+    margin-right: 6px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 479px) {
+  .peserta-page {
+    padding: 8px;
+  }
+
+  .page-header {
+    padding: 14px 16px;
+  }
+
+  .title-group h1 {
+    font-size: 18px;
+  }
+
+  table {
+    min-width: 600px;
   }
 }

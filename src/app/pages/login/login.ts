@@ -8,6 +8,7 @@ import {
   ApiResponse,
   LoginResponse,
 } from '../../services/auth.service';
+import { WhitelistService } from '../../services/whitelist.service';
 
 @Component({
   selector: 'app-login',
@@ -27,8 +28,9 @@ export class Login {
 
   constructor(
     private router: Router,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private whitelistService: WhitelistService
+  ) { }
 
   onSubmit() {
     console.log('onSubmit kepanggil, form:', this.form);
@@ -56,13 +58,15 @@ export class Login {
 
         // simpan token + user
         this.authService.saveAuth(token, user);
-        this.isLoading = false;
 
         // ROLE-BASED REDIRECT
         if (user.role === 'admin') {
+          // Admin langsung ke panel admin
+          this.isLoading = false;
           this.router.navigate(['/admin']);
         } else {
-          this.router.navigate(['/home']);
+          // Check whitelist status untuk user biasa
+          this.checkWhitelistAndRedirect();
         }
       },
       error: (err: any) => {
@@ -78,6 +82,30 @@ export class Login {
         } else {
           this.errorMessage = `Error ${err.status}: ${err.message || 'Login gagal.'}`;
         }
+      },
+    });
+  }
+
+  private checkWhitelistAndRedirect() {
+    // Check if user has approved whitelist request
+    this.whitelistService.getMyRequest().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        const request = response.data;
+
+        // If approved, redirect to admin panel (organizer)
+        if (request && request.status === 'approved') {
+          console.log('User is approved organizer, redirecting to admin');
+          this.router.navigate(['/admin']);
+        } else {
+          // Regular user or pending/rejected, go to home
+          this.router.navigate(['/home']);
+        }
+      },
+      error: () => {
+        // No whitelist request or error, just go to home
+        this.isLoading = false;
+        this.router.navigate(['/home']);
       },
     });
   }

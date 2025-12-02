@@ -10,35 +10,28 @@
     </div>
 
     <nav class="sidebar-nav">
-  <a
-    routerLink="/admin/kelola-event"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    class="nav-item"
-  >
-    <span class="nav-icon">📊</span>
-    <span class="nav-label">Kelola Event</span>
-  </a>
+      <a routerLink="/admin/kelola-event" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item" (click)="onNavClick()">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Kelola Event</span>
+      </a>
 
-  <!-- 👇 sekarang ke /admin/peserta (BUKAN ke kelola-event lagi) -->
-  <a
-    routerLink="/admin/peserta"
-    routerLinkActive="active"
-    class="nav-item"
-  >
-    <span class="nav-icon">👥</span>
-    <span class="nav-label">Peserta</span>
-  </a>
+      <!-- 👇 sekarang ke /admin/peserta (BUKAN ke kelola-event lagi) -->
+      <a routerLink="/admin/peserta" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Peserta</span>
+      </a>
 
-  <a
-    routerLink="/admin/reminder"
-    routerLinkActive="active"
-    class="nav-item"
-  >
-    <span class="nav-icon">🔔</span>
-    <span class="nav-label">Reminder</span>
-  </a>
-</nav>
+      <a routerLink="/admin/kelola-organisasi" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+        <span class="nav-icon">🏢</span>
+        <span class="nav-label">Kelola Organisasi</span>
+      </a>
+
+      <a routerLink="/admin/reminder" routerLinkActive="active" class="nav-item" (click)="onNavClick()">
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label">Reminder</span>
+      </a>
+    </nav>
   </aside>
 
   <!-- MAIN AREA -->

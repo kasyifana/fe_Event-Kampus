@@ -1,59 +1,118 @@
-# EventKampus
+# Event Campus - Angular Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+Aplikasi frontend untuk Event Campus - Sistem Manajemen Event Kampus menggunakan Angular 21.
 
-## Development server
+## 🚀 Status Inisialisasi
 
-To start a local development server, run:
+✅ **Project Fully Initialized!**
 
-```bash
-ng serve
+Semua file models, services, guards, interceptors, dan utilities sudah dibuat dan terintegrasi dengan API backend.
+
+## 📁 Struktur Project
+
+```
+src/app/
+├── models/              # Type-safe interfaces untuk semua entity API
+├── services/            # API integration services
+├── guards/              # Route protection (auth, admin, organizer)
+├── interceptors/        # HTTP middleware (auto token injection)
+├── utils/               # Helper functions
+├── pages/               # Page components
+└── layouts/             # Layout components
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🔧 Services Available
 
-## Code scaffolding
+| Service | File | Endpoints Covered |
+|---------|------|-------------------|
+| Auth | `auth.service.ts` | Login, Register, Token management |
+| Event | `event.service.ts` | CRUD events, filters, publish, poster upload |
+| Registration | `registration.service.ts` | Register, cancel, my registrations |
+| Attendance | `attendance.service.ts` | Mark attendance (single/bulk), get list |
+| Whitelist | `whitelist.service.ts` | Submit request, review, get status |
+| User | `user.service.ts` | Get user details |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🛡️ Route Guards
+
+- **authGuard** - Melindungi route yang memerlukan login
+- **adminGuard** - Melindungi route khusus admin
+- **organizerGuard** - Melindungi route khusus organizer yang sudah disetujui
+
+## 🔄 Auto Features
+
+- ✅ Automatic token injection pada semua HTTP requests (via interceptor)
+- ✅ Automatic redirect ke login saat token expired (401)
+- ✅ Type-safe models untuk semua API responses
+
+## 📚 Documentation
+
+- **[FILES_CREATED.md](./FILES_CREATED.md)** - Daftar semua file yang dibuat
+- **[SERVICE_USAGE_GUIDE.md](./SERVICE_USAGE_GUIDE.md)** - Contoh penggunaan services
+- **[walkthrough.md](./.gemini/antigravity/brain/.../walkthrough.md)** - Dokumentasi lengkap setup
+
+## 🎯 API Coverage
+
+100% endpoint dari Swagger specification tercakup:
+
+- ✅ Authentication (2 endpoints)
+- ✅ Events (8 endpoints)  
+- ✅ Registrations (4 endpoints)
+- ✅ Attendance (3 endpoints)
+- ✅ Whitelist (4 endpoints)
+
+## 💻 Development
 
 ```bash
-ng generate component component-name
+# Install dependencies
+npm install
+
+# Run development server
+npm start
+
+# Build for production
+npm run build
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🔗 API Configuration
 
-```bash
-ng generate --help
+Backend API: `http://103.49.239.164:3000`
+
+Proxy sudah dikonfigurasi di `proxy.conf.json` untuk development.
+
+## 🚦 Next Steps
+
+1. **Update existing components** untuk menggunakan services yang baru
+2. **Add pages** untuk whitelist request dan attendance management
+3. **Add error notifications** menggunakan toast/snackbar
+4. **Add loading states** pada semua API calls
+5. **Test** semua fitur dengan real API
+
+## 📖 Quick Start Example
+
+```typescript
+import { RegistrationService } from './services/registration.service';
+import { getErrorMessage } from './utils/error-handler.utils';
+
+export class MyComponent {
+  constructor(private registrationService: RegistrationService) {}
+
+  registerForEvent(eventId: string) {
+    this.registrationService.registerToEvent(eventId).subscribe({
+      next: (response) => {
+        console.log('Success!', response.data);
+      },
+      error: (error) => {
+        alert(getErrorMessage(error));
+      }
+    });
+  }
+}
 ```
 
-## Building
+Lihat `SERVICE_USAGE_GUIDE.md` untuk lebih banyak contoh!
 
-To build the project run:
+---
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**Last Updated:** 2024-12-02  
+**Angular Version:** 21.0.0  
+**Status:** ✅ Ready for Development
