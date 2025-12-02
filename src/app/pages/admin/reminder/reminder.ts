@@ -125,7 +125,9 @@ export class Reminder implements OnInit {
         console.error('[Reminder] Failed to update auto reminder:', err);
         // Revert state
         rem.active = oldState;
-        alert('Gagal mengubah status auto reminder. Silakan coba lagi.');
+        const status = err.status || 'Unknown';
+        const msg = err.error?.message || err.message || 'Unknown error';
+        alert(`Gagal mengubah status auto reminder (Status: ${status}).\nPesan: ${msg}`);
       }
     });
   }
