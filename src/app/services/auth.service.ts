@@ -47,7 +47,9 @@ export class AuthService {
   // Use environment config for API base URL
   private baseUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    console.log('[AuthService] Current API Base URL:', this.baseUrl);
+  }
 
   // --------------------------
   // AUTH API
