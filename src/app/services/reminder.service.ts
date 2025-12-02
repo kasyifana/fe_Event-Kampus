@@ -30,11 +30,17 @@ export class ReminderService {
     // Kirim reminder manual
     sendManualReminder(payload: ManualReminderPayload): Observable<any> {
         const headers = this.getAuthHeaders();
-        const url = `${this.baseUrl}/manual`;
+        // Endpoint yang benar: POST /api/v1/events/{id}/reminders
+        const url = `${environment.apiBaseUrl}/events/${payload.event_id}/reminders`;
 
         console.log('[ReminderService] POST manual reminder', url, payload);
 
-        return this.http.post(url, payload, { headers });
+        // Payload mungkin perlu disesuaikan jika backend butuh body tertentu
+        // Tapi dari curl user: -X POST ...reminders (tanpa body khusus selain auth)
+        // Kita kirim payload.extra_message jika ada
+        const body = payload.extra_message ? { message: payload.extra_message } : {};
+
+        return this.http.post(url, body, { headers });
     }
 
     // Update status auto reminder (ON/OFF)
