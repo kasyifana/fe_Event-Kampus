@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // ==== REQUEST ====
 export interface LoginRequest {
@@ -43,10 +44,10 @@ export interface ApiResponse<T> {
   providedIn: 'root',
 })
 export class AuthService {
-  // Pakai prefix /api -> nanti di-proxy ke backend
-  private baseUrl = '/api/v1';
+  // Use environment config for API base URL
+  private baseUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // --------------------------
   // AUTH API
