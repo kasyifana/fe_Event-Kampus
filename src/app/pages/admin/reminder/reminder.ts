@@ -159,7 +159,9 @@ export class Reminder implements OnInit {
       },
       error: (err) => {
         console.error('[Reminder] Failed to send manual reminder:', err);
-        alert('Gagal mengirim reminder. Pastikan backend berjalan dan endpoint benar.');
+        const status = err.status || 'Unknown';
+        const msg = err.error?.message || err.message || 'Unknown error';
+        alert(`Gagal mengirim reminder (Status: ${status}).\nPesan: ${msg}`);
         this.isSending = false;
       }
     });
