@@ -1,8 +1,8 @@
-// src/app/layouts/admin-layout/admin-layout.ts
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AuthService, User } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -15,9 +15,16 @@ export class AdminLayout implements OnInit {
   sidebarOpen = true;
   isMobile = false;
 
-  constructor(private router: Router) { }
+  currentUser: User | null = null;
+  showProfileMenu = false;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
+    this.currentUser = this.authService.getUser();
     this.checkScreenSize();
 
     // Close sidebar on navigation (mobile only)
@@ -27,6 +34,8 @@ export class AdminLayout implements OnInit {
         if (this.isMobile) {
           this.sidebarOpen = false;
         }
+        // Close profile menu on navigation
+        this.showProfileMenu = false;
       });
   }
 
@@ -53,6 +62,15 @@ export class AdminLayout implements OnInit {
     this.sidebarOpen = !this.sidebarOpen;
   }
 
+  toggleProfileMenu() {
+    this.showProfileMenu = !this.showProfileMenu;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   // Close sidebar when clicking a nav link (mobile only)
   onNavClick() {
     if (this.isMobile) {
@@ -60,17 +78,27 @@ export class AdminLayout implements OnInit {
     }
   }
 
-  // Close sidebar when clicking outside on mobile
+  // Close sidebar/menu when clicking outside
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    if (!this.isMobile || !this.sidebarOpen) return;
-
     const target = event.target as HTMLElement;
-    const sidebar = document.querySelector('.admin-sidebar');
-    const menuBtn = document.querySelector('.menu-btn');
 
-    if (sidebar && !sidebar.contains(target) && !menuBtn?.contains(target)) {
-      this.sidebarOpen = false;
+    // Handle Sidebar closing on mobile
+    if (this.isMobile && this.sidebarOpen) {
+      const sidebar = document.querySelector('.admin-sidebar');
+      const menuBtn = document.querySelector('.menu-btn');
+
+      if (sidebar && !sidebar.contains(target) && !menuBtn?.contains(target)) {
+        this.sidebarOpen = false;
+      }
+    }
+
+    // Handle Profile Menu closing
+    if (this.showProfileMenu) {
+      const profileChip = document.querySelector('.user-chip');
+      if (profileChip && !profileChip.contains(target)) {
+        this.showProfileMenu = false;
+      }
     }
   }
 }

@@ -49,11 +49,19 @@
 
       <div class="topbar-right">
         <button class="icon-btn" type="button">🔔</button>
-        <div class="user-chip">
-          <div class="user-avatar">A</div>
+
+        <div class="user-chip" (click)="toggleProfileMenu()">
+          <div class="user-avatar">{{ currentUser?.full_name?.charAt(0) || 'A' }}</div>
           <div class="user-info">
-            <div class="user-name">Admin</div>
-            <div class="user-role">Administrator</div>
+            <div class="user-name">{{ currentUser?.full_name || 'Admin' }}</div>
+            <div class="user-role">{{ currentUser?.role || 'Administrator' }}</div>
+          </div>
+
+          <!-- DROPDOWN MENU -->
+          <div class="profile-dropdown" *ngIf="showProfileMenu">
+            <div class="dropdown-item" (click)="logout()">
+              <span class="icon">🚪</span> Logout
+            </div>
           </div>
         </div>
       </div>
