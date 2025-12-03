@@ -26,6 +26,8 @@ export interface Registration {
         poster_url?: string;
         location?: string;
         zoom_link?: string;
+        organizer_name?: string;
+        organization_name?: string;
     };
 
     user?: {
