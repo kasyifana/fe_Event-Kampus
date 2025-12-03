@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
+import { EventService } from '../../services/event.service';
 import { environment } from '../../../environments/environment';
 import { Registration } from '../../models/registration.model';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 interface EventItem {
   id: string;               // ID event (buat buka detail)
@@ -35,7 +38,8 @@ export class EventSaya implements OnInit {
 
   constructor(
     private router: Router,
-    private registrationService: RegistrationService
+    private registrationService: RegistrationService,
+    private eventService: EventService
   ) { }
 
   ngOnInit(): void {
@@ -55,9 +59,9 @@ export class EventSaya implements OnInit {
     this.registrationService.getMyRegistrations().subscribe({
       next: (res) => {
         // Response wrapper: { success, message, data: Registration[] }
-        const registrations = res.data || [];
+        const registrations = res.data || res || [];
 
-        console.log('[EventSaya] my-registrations:', registrations);
+        console.log('[EventSaya] Extracted registrations:', registrations);
 
         if (!Array.isArray(registrations)) {
           console.error('[EventSaya] response data bukan array:', registrations);
@@ -66,109 +70,131 @@ export class EventSaya implements OnInit {
           return;
         }
 
-        const now = new Date();
+        if (registrations.length === 0) {
+          this.isLoading = false;
+          return;
+        }
 
-        registrations.forEach((reg: Registration) => {
-          // Pastikan ada event details
-          if (!reg.event) return;
-
-          const ev = reg.event;
-          const registrationId = reg.id;
-
-          // ========== TANGGAL ==========
-          const start = ev.start_date ? new Date(ev.start_date) : new Date();
-          const end = ev.end_date ? new Date(ev.end_date) : start;
-
-          const dateStr = start.toLocaleDateString('id-ID', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          });
-
-          const timeStr =
-            start.toLocaleTimeString('id-ID', {
-              hour: '2-digit',
-              minute: '2-digit',
-            }) +
-            ' - ' +
-            end.toLocaleTimeString('id-ID', {
-              hour: '2-digit',
-              minute: '2-digit',
-            }) +
-            ' WIB';
-
-          // ========== TEMPAT ==========
-          const place =
-            ev.location ||
-            (ev.event_type === 'online' ? 'Online (Zoom)' : '-');
-
-          // ========== POSTER ==========
-          let img = ev.poster_url || '';
-
-          // fallback kalau benar-benar kosong
-          if (!img) {
-            img = 'assets/events/default.png';
-          } else if (
-            !img.startsWith('http') &&
-            !img.startsWith('assets/')
-          ) {
-            if (img.startsWith('/')) {
-              img = environment.fileBaseUrl + img;
-            } else {
-              img = environment.fileBaseUrl + '/' + img;
-            }
+        // Create array of observables to fetch event details
+        const tasks = registrations.map((reg: Registration) => {
+          // If event is already populated, use it (wrapped in observable)
+          if (reg.event) {
+            return of({ reg, event: reg.event });
           }
 
-          // ========== KATEGORI ==========
-          const categoryLabel = this.mapCategoryLabel(ev.category);
-
-          // ========== STATUS ==========
-          // Status event selesai jika tanggal berakhir sudah lewat
-          // ATAU status registrasi 'attended' (sudah hadir)
-          // ATAU status registrasi 'cancelled' (dibatalkan)
-
-          const isPast = end.getTime() < now.getTime();
-
-          // Kita anggap 'done' jika event sudah lewat atau user sudah hadir
-          // Jika cancelled, mungkin tidak perlu ditampilkan atau masuk history?
-          // Di sini kita masukkan history jika cancelled/attended/past.
-
-          let status: 'upcoming' | 'done' = 'upcoming';
-
-          if (reg.status === 'cancelled') {
-            // Opsional: jangan tampilkan yang cancelled? 
-            // Atau masukkan ke history dengan tanda cancelled?
-            // Untuk sekarang kita skip yang cancelled agar tidak memenuhi list
-            // return; 
-            status = 'done'; // Masuk history
-          } else if (reg.status === 'attended' || isPast) {
-            status = 'done';
-          } else {
-            status = 'upcoming';
-          }
-
-          const mapped: EventItem = {
-            id: ev.id,
-            registrationId,
-            category: categoryLabel,
-            title: ev.title,
-            organizer: ev.organizer_name || 'Penyelenggara', // Note: Registration model might need organizer_name in event
-            date: dateStr,
-            time: timeStr,
-            place,
-            posterUrl: img,
-            status,
-            certificateUrl: null, // Belum ada di model Registration
-          };
-
-          if (status === 'upcoming') {
-            this.upcomingEvents.push(mapped);
-          } else {
-            this.historyEvents.push(mapped);
-          }
+          // Otherwise fetch event details
+          return this.eventService.getEventById(reg.event_id).pipe(
+            map(eventRes => ({ reg, event: eventRes.data || eventRes })),
+            catchError(err => {
+              console.error(`[EventSaya] Failed to fetch event ${reg.event_id}`, err);
+              return of(null); // Return null on error so forkJoin doesn't fail all
+            })
+          );
         });
 
-        this.isLoading = false;
+        // Execute all requests
+        forkJoin(tasks).subscribe({
+          next: (results) => {
+            const now = new Date();
+
+            results.forEach((item) => {
+              if (!item || !item.event) return;
+
+              const { reg, event: ev } = item;
+              const registrationId = reg.id;
+
+              // ========== TANGGAL ==========
+              const start = ev.start_date ? new Date(ev.start_date) : new Date();
+              const end = ev.end_date ? new Date(ev.end_date) : start;
+
+              const dateStr = start.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+              });
+
+              const timeStr =
+                start.toLocaleTimeString('id-ID', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }) +
+                ' - ' +
+                end.toLocaleTimeString('id-ID', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }) +
+                ' WIB';
+
+              // ========== TEMPAT ==========
+              const place =
+                ev.location ||
+                (ev.event_type === 'online' ? 'Online (Zoom)' : '-');
+
+              // ========== POSTER ==========
+              let img = ev.poster_url || '';
+
+              // fallback kalau benar-benar kosong
+              if (!img) {
+                img = 'assets/events/default.png';
+              } else if (
+                !img.startsWith('http') &&
+                !img.startsWith('assets/')
+              ) {
+                if (img.startsWith('/')) {
+                  img = environment.fileBaseUrl + img;
+                } else {
+                  img = environment.fileBaseUrl + '/' + img;
+                }
+              }
+
+              // ========== KATEGORI ==========
+              const categoryLabel = this.mapCategoryLabel(ev.category);
+
+              // ========== STATUS ==========
+              const isPast = end.getTime() < now.getTime();
+
+              let status: 'upcoming' | 'done' = 'upcoming';
+
+              // Handle 'registered' status from backend log
+              const regStatus = reg.status as string;
+
+              if (regStatus === 'cancelled') {
+                status = 'done';
+              } else if (regStatus === 'attended' || isPast) {
+                status = 'done';
+              } else {
+                // registered, confirmed, pending -> upcoming
+                status = 'upcoming';
+              }
+
+              const mapped: EventItem = {
+                id: ev.id,
+                registrationId,
+                category: categoryLabel,
+                title: ev.title,
+                organizer: ev.organizer_name || ev.organization_name || 'Penyelenggara',
+                date: dateStr,
+                time: timeStr,
+                place,
+                posterUrl: img,
+                status,
+                certificateUrl: null,
+              };
+
+              if (status === 'upcoming') {
+                this.upcomingEvents.push(mapped);
+              } else {
+                this.historyEvents.push(mapped);
+              }
+            });
+
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('[EventSaya] Error fetching event details', err);
+            this.isLoading = false;
+          }
+        });
       },
       error: (err) => {
         console.error('[EventSaya] gagal load event saya:', err);
