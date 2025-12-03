@@ -131,20 +131,10 @@ export class EventSaya implements OnInit {
                 (ev.event_type === 'online' ? 'Online (Zoom)' : '-');
 
               // ========== POSTER ==========
-              let img = ev.poster_url || '';
+              let img = ev.poster_url || 'assets/events/default.png';
 
-              // fallback kalau benar-benar kosong
-              if (!img) {
-                img = 'assets/events/default.png';
-              } else if (
-                !img.startsWith('http') &&
-                !img.startsWith('assets/')
-              ) {
-                if (img.startsWith('/')) {
-                  img = environment.fileBaseUrl + img;
-                } else {
-                  img = environment.fileBaseUrl + '/' + img;
-                }
+              if (img.startsWith('http://localhost:8080')) {
+                img = img.replace('http://localhost:8080', environment.fileBaseUrl);
               }
 
               // ========== KATEGORI ==========
