@@ -1,9 +1,9 @@
-// src/app/pages/event-saya/event-saya.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { EventService } from '../../services/event.service';
+import { RegistrationService } from '../../services/registration.service';
 import { environment } from '../../../environments/environment';
+import { Registration } from '../../models/registration.model';
 
 interface EventItem {
   id: string;               // ID event (buat buka detail)
@@ -35,8 +35,8 @@ export class EventSaya implements OnInit {
 
   constructor(
     private router: Router,
-    private eventService: EventService
-  ) {}
+    private registrationService: RegistrationService
+  ) { }
 
   ngOnInit(): void {
     this.loadMyEvents();
@@ -52,14 +52,15 @@ export class EventSaya implements OnInit {
     this.upcomingEvents = [];
     this.historyEvents = [];
 
-    this.eventService.getMyRegisteredEvents().subscribe({
+    this.registrationService.getMyRegistrations().subscribe({
       next: (res) => {
-        const raw = res?.data ?? res ?? [];
+        // Response wrapper: { success, message, data: Registration[] }
+        const registrations = res.data || [];
 
-        console.log('[EventSaya] my-registrations API raw:', raw);
+        console.log('[EventSaya] my-registrations:', registrations);
 
-        if (!Array.isArray(raw)) {
-          console.error('[EventSaya] response bukan array:', raw);
+        if (!Array.isArray(registrations)) {
+          console.error('[EventSaya] response data bukan array:', registrations);
           this.errorMessage = 'Format data tidak sesuai.';
           this.isLoading = false;
           return;
@@ -67,16 +68,16 @@ export class EventSaya implements OnInit {
 
         const now = new Date();
 
-        raw.forEach((item: any) => {
-          // swagger umumnya: { id: 'reg-id', event: {...}, certificate_url: '...' }
-          const registrationId: string | undefined = item?.id;
-          const ev = item?.event ?? item;
+        registrations.forEach((reg: Registration) => {
+          // Pastikan ada event details
+          if (!reg.event) return;
 
-          if (!ev || !registrationId) return;
+          const ev = reg.event;
+          const registrationId = reg.id;
 
           // ========== TANGGAL ==========
           const start = ev.start_date ? new Date(ev.start_date) : new Date();
-          const end   = ev.end_date   ? new Date(ev.end_date)   : start;
+          const end = ev.end_date ? new Date(ev.end_date) : start;
 
           const dateStr = start.toLocaleDateString('id-ID', {
             day: '2-digit',
@@ -102,29 +103,18 @@ export class EventSaya implements OnInit {
             (ev.event_type === 'online' ? 'Online (Zoom)' : '-');
 
           // ========== POSTER ==========
-          // coba baca dari beberapa kemungkinan field
-          let img: string =
-            ev.poster_url ||
-            ev.poster ||
-            ev.posterUrl ||
-            item.poster_url ||
-            item.poster ||
-            '';
+          let img = ev.poster_url || '';
 
           // fallback kalau benar-benar kosong
           if (!img) {
             img = 'assets/events/default.png';
           } else if (
-            // kalau BUKAN URL penuh & BUKAN asset Angular,
-            // baru kita tempel fileBaseUrl (backend)
             !img.startsWith('http') &&
             !img.startsWith('assets/')
           ) {
             if (img.startsWith('/')) {
-              // contoh: "/files/xxx.png"
               img = environment.fileBaseUrl + img;
             } else {
-              // contoh: "files/xxx.png"
               img = environment.fileBaseUrl + '/' + img;
             }
           }
@@ -133,25 +123,42 @@ export class EventSaya implements OnInit {
           const categoryLabel = this.mapCategoryLabel(ev.category);
 
           // ========== STATUS ==========
-          const isPast = end.getTime() < now.getTime();
-          const isStatusFinished =
-            ev.status === 'completed' || ev.status === 'cancelled';
+          // Status event selesai jika tanggal berakhir sudah lewat
+          // ATAU status registrasi 'attended' (sudah hadir)
+          // ATAU status registrasi 'cancelled' (dibatalkan)
 
-          const status: 'upcoming' | 'done' =
-            isPast || isStatusFinished ? 'done' : 'upcoming';
+          const isPast = end.getTime() < now.getTime();
+
+          // Kita anggap 'done' jika event sudah lewat atau user sudah hadir
+          // Jika cancelled, mungkin tidak perlu ditampilkan atau masuk history?
+          // Di sini kita masukkan history jika cancelled/attended/past.
+
+          let status: 'upcoming' | 'done' = 'upcoming';
+
+          if (reg.status === 'cancelled') {
+            // Opsional: jangan tampilkan yang cancelled? 
+            // Atau masukkan ke history dengan tanda cancelled?
+            // Untuk sekarang kita skip yang cancelled agar tidak memenuhi list
+            // return; 
+            status = 'done'; // Masuk history
+          } else if (reg.status === 'attended' || isPast) {
+            status = 'done';
+          } else {
+            status = 'upcoming';
+          }
 
           const mapped: EventItem = {
             id: ev.id,
             registrationId,
             category: categoryLabel,
             title: ev.title,
-            organizer: ev.organizer_name || 'Penyelenggara',
+            organizer: ev.organizer_name || 'Penyelenggara', // Note: Registration model might need organizer_name in event
             date: dateStr,
             time: timeStr,
             place,
             posterUrl: img,
             status,
-            certificateUrl: item?.certificate_url ?? null,
+            certificateUrl: null, // Belum ada di model Registration
           };
 
           if (status === 'upcoming') {
@@ -165,23 +172,7 @@ export class EventSaya implements OnInit {
       },
       error: (err) => {
         console.error('[EventSaya] gagal load event saya:', err);
-
-        switch (err.status) {
-          case 401:
-            this.errorMessage = 'Sesi login habis. Silakan login kembali.';
-            break;
-          case 403:
-            this.errorMessage =
-              'Kamu tidak punya izin untuk mengakses data event ini.';
-            break;
-          default:
-            this.errorMessage =
-              err.error?.error ||
-              err.error?.message ||
-              'Gagal memuat event yang kamu ikuti.';
-            break;
-        }
-
+        this.errorMessage = err.error?.message || 'Gagal memuat event yang kamu ikuti.';
         this.isLoading = false;
       },
     });
@@ -214,17 +205,14 @@ export class EventSaya implements OnInit {
 
     if (!confirm(`Batalkan pendaftaran untuk "${eventItem.title}"?`)) return;
 
-    this.eventService.cancelRegistration(eventItem.registrationId).subscribe({
+    this.registrationService.cancelRegistration(eventItem.registrationId).subscribe({
       next: () => {
         alert('Pendaftaran berhasil dibatalkan.');
         this.loadMyEvents();
       },
       error: (err: any) => {
         console.error('[EventSaya] cancel failed:', err);
-        const msg =
-          err.error?.error ||
-          err.error?.message ||
-          'Gagal membatalkan pendaftaran.';
+        const msg = err.error?.message || 'Gagal membatalkan pendaftaran.';
         alert(msg);
       },
     });
